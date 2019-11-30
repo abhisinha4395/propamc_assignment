@@ -3,33 +3,16 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 import os
 import csv
 import googlemaps
-#from .forms import CsvModelForm
 
 # Create your views here.
-'''
-def upload_csv(request):
-    if request.method == 'POST':
-        import pdb;pdb.set_trace()
-        csv_file_name = request.FILES['csv_file']
-        data = {
-            'title': csv_file_name,
-            'csv_file': request.FILES
-        }
-        form = CsvModelForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('upload_csv'))
-
-    else:
-        form = CsvModelForm()
-        return render(request, 'pinpoint.html', {'form': form})
-'''
 
 def upload_csv(request):
+
     context = {}
     if "GET" == request.method:
         return render(request, "pinpoint.html", {'name': ''})
@@ -43,24 +26,23 @@ def upload_csv(request):
     fs = FileSystemStorage()
     name = fs.save(csv_file.name, csv_file)
     context['name'] = name
-    context['file_obj'] = csv_file
 
     return render(request, "pinpoint.html", context)
 
-def process_csv(request, csv_file):
-
-    gmaps = googlemaps.Client(key='AIzaSyDbEgQ2Imxzdp1dsbi1IXM1nYAgTuhuszY')
-
-    file_data = csv_file.read().decode("utf-8")
-    lines = file_data.split("\n")
+def process_csv(request):
+    csv_file = request.GET.get('csv_file')
+    csv_file = os.path.join(settings.MEDIA_ROOT, csv_file)
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename = output.csv'
     writer = csv.writer(response)
 
-    for line in lines:
+    gmaps = googlemaps.Client(key='AIzaSyDbEgQ2Imxzdp1dsbi1IXM1nYAgTuhuszY')
+    file_data = open(csv_file)
+    for line in file_data:
         address = line
-        geocode_result = gmaps.geocode(address)[results][0]
+        #import pdb; pdb.set_trace()
+        geocode_result = gmaps.geocode(address)[0]
         latitude =  geocode_result.get('geometry', {}).get('location', {}).get('lat', 0)
         longitude =  geocode_result.get('geometry', {}).get('location', {}).get('lng', 0)
 

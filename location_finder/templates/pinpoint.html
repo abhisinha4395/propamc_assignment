@@ -30,15 +30,14 @@
                     <input type="file" class="form-control-file" id="exampleFormControlFile1" name="csv_file" required=True>
                     <div>
                         <button type="submit" class="btn btn-primary" id="one">Upload</button>
-                        <button type="submit" class="btn btn-primary" disabled id="two" onclick="({{file_obj}})">
+                        <button type="submit" class="btn btn-primary" disabled id="two" filename="{{name}}" downloadable="false">
                             <span class="spinner-border spinner-border-sm d-none" id='spinner' role="status" aria-hidden="true"></span>
+                            
                             <span id="btn-text">Start Processing</span>
                         </button>
                     </div>
                 </div>
-                {% if name %}
-                    <p>Uploaded file: {{name}} </p>
-                {% endif %}
+
             </form>
         </div>
         <script type="text/javascript" src="../static/js/master.js">
