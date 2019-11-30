@@ -2,18 +2,14 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
 
 import os
-import json
-import logging
-import requests
+import csv
 import googlemaps
 #from .forms import CsvModelForm
 
 # Create your views here.
-def testing(request):
-    return render(request, 'pinpoint.html')
-
 '''
 def upload_csv(request):
     if request.method == 'POST':
@@ -34,9 +30,9 @@ def upload_csv(request):
 '''
 
 def upload_csv(request):
-    data = {}
+    context = {}
     if "GET" == request.method:
-        return render(request, "pinpoint.html", data)
+        return render(request, "pinpoint.html", {'name': ''})
         # if not GET, then proceed
 
     csv_file = request.FILES["csv_file"]
@@ -44,14 +40,31 @@ def upload_csv(request):
         messages.error(request,'File is not CSV type')
         return HttpResponseRedirect(reverse("upload_csv"))
 
+    fs = FileSystemStorage()
+    name = fs.save(csv_file.name, csv_file)
+    context['name'] = name
+    context['file_obj'] = csv_file
+
+    return render(request, "pinpoint.html", context)
+
+def process_csv(request, csv_file):
+
     gmaps = googlemaps.Client(key='AIzaSyDbEgQ2Imxzdp1dsbi1IXM1nYAgTuhuszY')
 
     file_data = csv_file.read().decode("utf-8")
     lines = file_data.split("\n")
-    fname = os.path.splitext(os.path.basename(csv_file.name))[0]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename = output.csv'
+    writer = csv.writer(response)
+
     for line in lines:
         address = line
-        geocode_result = gmaps.geocode(address)
-        break
+        geocode_result = gmaps.geocode(address)[results][0]
+        latitude =  geocode_result.get('geometry', {}).get('location', {}).get('lat', 0)
+        longitude =  geocode_result.get('geometry', {}).get('location', {}).get('lng', 0)
 
-    return HttpResponse(geocode_result)
+        output_line = [address, latitude, longitude]
+        writer.writerow(output_line)
+
+    return response
