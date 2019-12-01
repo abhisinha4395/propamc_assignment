@@ -1,6 +1,5 @@
 $(document).ready(function(){
     $("#one").on('click', function(){
-        //e.preventDefault();
         $('#one').attr("disabled", true);
         $('#two').attr("disabled", false);
     });
@@ -34,7 +33,7 @@ $(document).ready(function(){
                 })
 
             } else {
-                
+
                 $('#one').attr("disabled", false);
                 $('#two').attr("disabled", true);
                 $('#btn-text').text("Start Processing");

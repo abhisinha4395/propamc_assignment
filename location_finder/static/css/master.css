@@ -5,4 +5,17 @@ body {
   display: flex;
   justify-content:center;
   align-items: center;
+  radius: 50%;
+}
+
+.btn {
+  border: 2px solid blue;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.form-control-file {
+    padding-bottom: 10px;
 }

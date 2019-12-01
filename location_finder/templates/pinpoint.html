@@ -23,21 +23,25 @@
     </head>
     <body>
         <div class="jumbotron">
+            <h1>Geocode an address!</h1>
             <form  id="upload-form" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="exampleFormControlFile1"><h3> Input a csv file</h3></label>
+                    <label for="exampleFormControlFile1"><h5> Input a csv file</h3></label>
                     <input type="file" class="form-control-file" id="exampleFormControlFile1" name="csv_file" required=True>
                     <div>
                         <button type="submit" class="btn btn-primary" id="one">Upload</button>
                         <button type="submit" class="btn btn-primary" disabled id="two" filename="{{name}}" downloadable="false">
                             <span class="spinner-border spinner-border-sm d-none" id='spinner' role="status" aria-hidden="true"></span>
-                            
                             <span id="btn-text">Start Processing</span>
                         </button>
                     </div>
                 </div>
-
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
             </form>
         </div>
         <script type="text/javascript" src="../static/js/master.js">

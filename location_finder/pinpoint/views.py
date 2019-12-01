@@ -18,9 +18,9 @@ def upload_csv(request):
         return render(request, "pinpoint.html", {'name': ''})
         # if not GET, then proceed
 
-    csv_file = request.FILES["csv_file"]
+    csv_file = request.FILES.get("csv_file")
     if not csv_file.name.endswith('.csv'):
-        messages.error(request,'File is not CSV type')
+        messages.error(request,'File is not CSV type. Upload another file')
         return HttpResponseRedirect(reverse("upload_csv"))
 
     fs = FileSystemStorage()
