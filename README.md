@@ -13,3 +13,6 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 python4 manage.py runserver
 ```
+
+### Bugs
+- we need to press the upload button twice for the 'start processing' button to get enabled
